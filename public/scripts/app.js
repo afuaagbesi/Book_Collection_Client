@@ -5,7 +5,6 @@ async function openAddBookModal() {
   let genres = [];
 
   try {
-    // Fetch genres data
     const response_genre = await axios.get(`/genres/`);
     genres = response_genre.data;
   } catch (err) {
@@ -14,7 +13,6 @@ async function openAddBookModal() {
     return; // Exit if genres cannot be fetched
   }
 
-  // Modal HTML structure
   const modalHTML = `
     <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
       <div class="modal-dialog">
