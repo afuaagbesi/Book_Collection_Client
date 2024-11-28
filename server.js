@@ -42,9 +42,9 @@ app.get('/genres', async (req, res) => {
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Client running at http://localhost:${PORT}`);
-});
+// // Start the server
+// app.listen(PORT, () => {
+//   console.log(`Client running at http://localhost:${PORT}`);
+// });
 
 module.exports = app;
