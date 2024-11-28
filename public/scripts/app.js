@@ -4,8 +4,14 @@ axios.defaults.baseURL = 'https://book-collection-server-tau.vercel.app';
 async function openAddBookModal() {
   try {
     // Fetch genres data
-    const response_genre = await axios.get(`/genres/`);
-    const genres = response_genre.data;
+    const response = await axios.get(`/genres/`);
+    const genres = response.data;
+
+    // Ensure `genres` is available before generating modal content
+    if (!genres || genres.length === 0) {
+      alert("No genres available. Please add genres first.");
+      return;
+    }
 
     // Generate modal HTML after successfully fetching genres
     const modalHTML = `
