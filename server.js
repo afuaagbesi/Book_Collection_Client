@@ -10,7 +10,10 @@ const PORT = 4000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
-app.set('view engine', 'ejs'); // Set EJS as the template engine
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 
 // Base API URL for the backend server
 const API_URL = 'https://book-collection-server-tau.vercel.app';
