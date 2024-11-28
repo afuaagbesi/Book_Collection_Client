@@ -2,99 +2,97 @@ axios.defaults.baseURL = 'https://book-collection-server-tau.vercel.app';
 
 
 async function openAddBookModal() {
-  let genres = [];
-
   try {
+    // Fetch genres data
     const response_genre = await axios.get(`/genres/`);
-    genres = response_genre.data;
-  } catch (err) {
-    console.error('Error fetching genres:', err);
-    alert('Failed to fetch genres. Please try again.');
-    return; // Exit if genres cannot be fetched
-  }
+    const genres = response_genre.data;
 
-  const modalHTML = `
-    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="addBookForm">
-              <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <input type="text" id="title" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label for="author" class="form-label">Author</label>
-                <input type="text" id="author" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label for="price" class="form-label">Price</label>
-                <input type="number" id="price" class="form-control" step="0.01" required>
-              </div>
-              <div class="mb-3">
-                <label for="genre" class="form-label">Genre</label>
-                <select id="genre" class="form-select" required>
-                  <option value="">Select Genre</option>
-                  ${genres.map(genre => `<option value="${genre.id}">${genre.name}</option>`).join('')}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="copies" class="form-label">Copies Left</label>
-                <input type="number" id="copies" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label for="image" class="form-label">Image URL</label>
-                <input type="url" id="image" class="form-control" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Add Book</button>
-            </form>
+    // Generate modal HTML after successfully fetching genres
+    const modalHTML = `
+      <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="addBookForm">
+                <div class="mb-3">
+                  <label for="title" class="form-label">Title</label>
+                  <input type="text" id="title" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                  <label for="author" class="form-label">Author</label>
+                  <input type="text" id="author" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                  <label for="price" class="form-label">Price</label>
+                  <input type="number" id="price" class="form-control" step="0.01" required>
+                </div>
+                <div class="mb-3">
+                  <label for="genre" class="form-label">Genre</label>
+                  <select id="genre" class="form-select" required>
+                    <option value="">Select Genre</option>
+                    ${genres.map(genre => `<option value="${genre.id}">${genre.name}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="copies" class="form-label">Copies Left</label>
+                  <input type="number" id="copies" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                  <label for="image" class="form-label">Image URL</label>
+                  <input type="url" id="image" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Book</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  `;
+    `;
 
-  // Append modal to the document body
-  document.body.insertAdjacentHTML('beforeend', modalHTML);
+    // Append modal to the document body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-  // Initialize and show the modal
-  const modalElement = document.getElementById('addBookModal');
-  const modalInstance = new bootstrap.Modal(modalElement);
-  modalInstance.show();
+    // Initialize and show the modal
+    const modalElement = document.getElementById('addBookModal');
+    const modalInstance = new bootstrap.Modal(modalElement);
+    modalInstance.show();
 
-  // Handle form submission
-  document.getElementById('addBookForm').onsubmit = async (e) => {
-    e.preventDefault();
-    const newBook = {
-      title: document.getElementById('title').value,
-      author: document.getElementById('author').value,
-      price: parseFloat(document.getElementById('price').value),
-      genre_id: parseInt(document.getElementById('genre').value),
-      copies_left: parseInt(document.getElementById('copies').value),
-      image_url: document.getElementById('image').value,
+    // Handle form submission
+    document.getElementById('addBookForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const newBook = {
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        price: parseFloat(document.getElementById('price').value),
+        genre_id: parseInt(document.getElementById('genre').value),
+        copies_left: parseInt(document.getElementById('copies').value),
+        image_url: document.getElementById('image').value,
+      };
+
+      try {
+        await axios.post('/books', newBook);
+        modalInstance.hide();
+        modalElement.remove(); // Clean up the modal element
+        location.reload(); // Reload page to reflect changes
+      } catch (err) {
+        console.error('Error adding book:', err);
+        alert('Failed to add book. Please try again.');
+      }
     };
 
-    try {
-      await axios.post('/books', newBook);
-      modalInstance.hide();
-      modalElement.remove(); // Clean up the modal element
-      location.reload(); // Reload page to reflect changes
-    } catch (err) {
-      console.error('Error adding book:', err);
-      alert('Failed to add book. Please try again.');
-    }
-  };
-
-  // Cleanup modal on hide
-  modalElement.addEventListener('hidden.bs.modal', () => {
-    modalElement.remove();
-  });
+    // Cleanup modal on hide
+    modalElement.addEventListener('hidden.bs.modal', () => {
+      modalElement.remove();
+    });
+  } catch (err) {
+    console.error('Error fetching genres:', err);
+    alert('Failed to fetch genres. Please try again.');
+  }
 }
-
 
   
 
