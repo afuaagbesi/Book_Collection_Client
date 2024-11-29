@@ -36,6 +36,40 @@ app.get('/books', async (req, res) => {
   }
 });
 
+app.get('/add-book', async (req, res) => {
+  try {
+    const response = await axios.get(`${API_URL}/genres`);
+    const genres = response.data;
+    res.render('addBook', { genres }); 
+  } catch (error) {
+    console.error('Error fetching genres:', error);
+    res.status(500).send('Error loading the Add Book page.');
+  }
+});
+
+app.post('/books', async (req, res) => {
+  const { title, author, price, genre_id, copies_left, image_url } = req.body;
+  try {
+    // Forward the request to the backend API
+    await axios.post(`${API_URL}/books`, {
+      title,
+      author,
+      price,
+      genre_id,
+      copies_left,
+      image_url,
+    },{
+      timeout: 5000,
+    });
+    res.redirect('/books'); // Redirect to books list after successful addition
+  } catch (error) {
+    console.error('Error adding book:', error);
+    res.status(500).send('Error adding the book.');
+  }
+});
+
+
+
 app.get('/genres', async (req, res) => {
   try {
     const genresResponse = await axios.get(`${API_URL}/genres`);
